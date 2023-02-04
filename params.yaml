@@ -1,0 +1,25 @@
+argument_pool: 'motor-axis-currents'
+#['motor-axis-currents', 'motorCurrent-motorVelocities', 'only-motor-currents']
+
+data_prep:
+  train_test_ratio: 0.7
+  train_val_ratio: 0.9
+  random_state: 42
+
+decision_tree:
+  DecisionTree:
+    max_depth: [ 5, 10, 15, 20 ]
+    splitter: [ 'best', 'random' ]
+    min_samples_split: [ 2, 3, 4 ]
+    min_samples_leaf: [ 1, 2, 3, 4 ]
+  RandomForest:
+    n_estimators: [5, 10, 15, 25, 35]
+    max_depth: [ 5, 10, 15, 20 ]
+    min_samples_split: [ 2, 3, 4, 6 ]
+    min_samples_leaf: [ 1, 2, 3, 4 ]
+
+cat_boost:
+  n_estimators: [ 20, 40, 80 ]
+  max_depth: [ 5, 8, 12 ]
+
+#validation: ['DecisionTree', 'RandomForest', 'CatClassifier']
