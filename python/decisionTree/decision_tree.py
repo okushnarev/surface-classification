@@ -10,7 +10,7 @@ from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 
-TREES_MODELS_MAPPER = {'DecisionTree': tree.DecisionTreeRegressor,
+TREES_MODELS_MAPPER = {'DecisionTree': tree.DecisionTreeClassifier,
                        'RandomForest': RandomForestClassifier}
 
 def parser_args_for_sac():

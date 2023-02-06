@@ -21,14 +21,6 @@ def to_categorical(df: pd.DataFrame):
     df = df.assign(surface_type=df.surface_type.cat.codes)
     return df
 
-
-def keep_columns(df: pd.DataFrame, safeColumns) -> pd.DataFrame:
-    for column in df.columns:
-        if column not in safeColumns:
-            df.drop(column, axis=1, inplace=True)
-    return df
-
-
 def exportDF(df: pd.DataFrame, dir):
     X = df.drop('surface_type', axis=1)
     y = df['surface_type']
@@ -101,7 +93,7 @@ if __name__ == '__main__':
     types = ['motor-axis-currents', 'motorCurrent-motorVelocities', 'only-motor-currents']
 
     for type in types:
-        prepDF = df
+        prepDF = df.copy()
         if type == 'motor-axis-currents':
             prepDF = prepDF[['xsetspeed', 'ysetspeed', 'm1cur', 'm2cur', 'm3cur', 'sum_motor_current', 'xcur', 'ycur',
                              'rotcur', 'sum_axis_current', 'rotational', 'surface_type']]
@@ -113,18 +105,5 @@ if __name__ == '__main__':
                              'm3cur']]
         exportDF(prepDF, type)
 
-    # for type in types:
-    #     prepDF = df
-    #     if type == 'motor-axis-currents':
-    #         prepDF = keep_columns(prepDF, ['surface_type', 'rotational', 'X_axis_speed_mm_s', 'Y_axis_speed_mm_s',
-    #         'Motor_1_current_A', 'Motor_2_current_A','Motor_3_current_A', 'Current_X_A', 'Current_Y_A', 'Current_Z_A',
-    #         'Sum_motor_current_A', 'sum_axis_current'])
-    #     elif type == 'motorCurrent-motorVelocities':
-    #         prepDF = keep_columns(prepDF, ['surface_type', 'rotational', 'X_axis_speed_mm_s', 'Y_axis_speed_mm_s',
-    #                                        'Motor_1_current_A', 'Motor_2_current_A', 'Motor_3_current_A',
-    #                                        'Motor_1_velocity_rpm', 'Motor_2_velocity_rpm', 'Motor_3_velocity_rpm'])
-    #     elif type == 'only-motor-currents':
-    #         prepDF = keep_columns(prepDF, ['surface_type', 'rotational', 'X_axis_speed_mm_s', 'Y_axis_speed_mm_s', 'Motor_1_current_A', 'Motor_2_current_A', 'Motor_3_current_A'])
-    #     exportDF(prepDF, type)
 
 

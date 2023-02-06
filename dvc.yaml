@@ -1,9 +1,9 @@
 stages:
 
   data_prep:
-    cmd: python data_prep.py -id data/raw -od data/prepared -p params.yaml
+    cmd: python python/DataPreparation/data_prep.py -id data/raw -od data/prepared -p params.yaml
     deps:
-      - data_prep.py
+      - python/DataPreparation/data_prep.py
       - data/raw
     outs:
       - data/prepared
@@ -13,9 +13,9 @@ stages:
   decision_tree:
     foreach: ${decision_tree}
     do:
-      cmd: python decision_tree.py -id data/prepared/${argument_pool} -od data/models/${argument_pool} -mn ${key} -p params.yaml
+      cmd: python python/decisionTree/decision_tree.py -id data/prepared/${argument_pool} -od data/models/${argument_pool} -mn ${key} -p params.yaml
       deps:
-        - decision_tree.py
+        - python/decisionTree/decision_tree.py
         - data/prepared
       outs:
         - data/models/${argument_pool}/${key}.joblib
@@ -25,26 +25,26 @@ stages:
   decision_tree_validation:
     foreach: ${decision_tree}
     do:
-      cmd: python decision_tree_valid.py -id data/prepared/${argument_pool}  -im data/models/${argument_pool}/${key}.joblib
+      cmd: python python/decisionTree/decision_tree_valid.py -id data/prepared/${argument_pool}  -im data/models/${argument_pool}/${key}.joblib
       deps:
-        - decision_tree_valid.py
+        - python/decisionTree/decision_tree_valid.py
         - data/prepared
         - data/models/${argument_pool}/${key}.joblib
 
   decision_tree_prod:
     foreach: ${decision_tree}
     do:
-      cmd: python decision_tree_full.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/ -mn ${key} -ap ${argument_pool}
+      cmd: python python/decisionTree/decision_tree_full.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/ -mn ${key} -ap ${argument_pool}
       deps:
-        - decision_tree_full.py
+        - python/decisionTree/decision_tree_full.py
         - data/prepared
       outs:
         - data/models/${argument_pool}/${key}_prod.joblib
 
   cat_boost:
-    cmd: python cat_boost.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/ -bm data/models/${argument_pool}/RandomForest_prod.joblib -p params.yaml
+    cmd: python python/catBoost/cat_boost.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/ -bm data/models/${argument_pool}/RandomForest_prod.joblib -p params.yaml
     deps:
-      - cat_boost.py
+      - python/catBoost/cat_boost.py
       - data/prepared
       - data/models/${argument_pool}/DecisionTree_prod.joblib
     outs:
@@ -53,24 +53,24 @@ stages:
       - cat_boost
 
   cat_boost_validation:
-    cmd: python cat_boost_valid.py -id data/prepared/${argument_pool}/ -im data/models/${argument_pool}/CatClassifier.joblib
+    cmd: python python/catBoost/cat_boost_valid.py -id data/prepared/${argument_pool}/ -im data/models/${argument_pool}/CatClassifier.joblib
     deps:
-      - cat_boost_valid.py
+      - python/catBoost/cat_boost_valid.py
       - data/prepared
       - data/models/${argument_pool}/CatClassifier.joblib
 
   cat_boost_prod_version:
-    cmd: python cat_boost_full.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/
+    cmd: python python/catBoost/cat_boost_full.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/
     deps:
-      - cat_boost_full.py
+      - python/catBoost/cat_boost_full.py
       - data/prepared
     outs:
       - data/models/${argument_pool}/CatClassifier_prod.joblib
 
   prep_valid_data:
-    cmd: python valid_data_prep.py -id data/new/raw -od data/new/prepared  -ap ${argument_pool}
+    cmd: python python/DataPreparation/data_prep_new.py -id data/new/raw -od data/new/prepared  -ap ${argument_pool}
     deps:
-      - valid_data_prep.py
+      - python/DataPreparation/data_prep_new.py
       - data/new/raw
     outs:
       - data/new/prepared
@@ -81,8 +81,8 @@ stages:
       - RandomForest
       - CatClassifier
     do:
-      cmd: python valid_new_data.py -id data/new/prepared -im data/models/${argument_pool}/${item}_prod.joblib
+      cmd: python python/validation/valid_new_data.py -id data/new/prepared -im data/models/${argument_pool}/${item}_prod.joblib
       deps:
-        - valid_new_data.py
+        - python/validation/valid_new_data.py
         - data/new/prepared
         - data/models/${argument_pool}/${item}_prod.joblib

@@ -45,17 +45,17 @@ if __name__ == '__main__':
 
     if argument_pool == 'motor-axis-currents':
         TREES_MODELS_BEST_PARAMETERS = {
-            'DecisionTree': {'max_depth': 20, 'min_samples_leaf': 4, 'min_samples_split': 4, 'splitter': 'random'},
+            'DecisionTree': {'max_depth': 15, 'min_samples_leaf': 4, 'min_samples_split': 3, 'splitter': 'best'},
             'RandomForest': {'max_depth': 20, 'min_samples_leaf': 2, 'min_samples_split': 4, 'n_estimators': 25}}
 
     elif argument_pool == 'motorCurrent-motorVelocities':
         TREES_MODELS_BEST_PARAMETERS = {
-            'DecisionTree': {'max_depth': 15, 'min_samples_leaf': 3, 'min_samples_split': 3, 'splitter': 'random'},
+            'DecisionTree': {'max_depth': 20, 'min_samples_leaf': 1, 'min_samples_split': 3, 'splitter': 'random'},
             'RandomForest': {'max_depth': 20, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 35}}
 
     elif argument_pool == 'only-motor-currents':
         TREES_MODELS_BEST_PARAMETERS = {
-            'DecisionTree': {'max_depth': 20, 'min_samples_leaf': 3, 'min_samples_split': 4, 'splitter': 'random'},
+            'DecisionTree': {'max_depth': 10, 'min_samples_leaf': 1, 'min_samples_split': 3, 'splitter': 'best'},
             'RandomForest': {'max_depth': 15, 'min_samples_leaf': 1, 'min_samples_split': 6, 'n_estimators': 35}}
 
     else:
