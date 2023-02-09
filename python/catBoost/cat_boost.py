@@ -3,6 +3,7 @@ import argparse
 from pathlib import Path
 import yaml
 import numpy as np
+from sklearn.metrics import accuracy_score, make_scorer
 from catboost import CatBoostClassifier as Cat
 from joblib import dump, load
 import random
@@ -47,17 +48,19 @@ if __name__ == '__main__':
     X_test = pd.read_csv(X_test_name)
     y_test = pd.read_csv(y_test_name)
 
+    scorer = make_scorer(accuracy_score)
+
     random.seed(42)
     cat_model = Cat()
-    cat_classifier = GridSearchCV(cat_model, params)
+    cat_classifier = GridSearchCV(cat_model, params, scoring=scorer, n_jobs=-1)
 
     cat_classifier = cat_classifier.fit(X_train, y_train, silent=True)
 
     # baseline_model = load(baseline_model_path)
     # y_pred_baseline = baseline_model.predict(X_test)
 
-    print("Score: ", cat_classifier.score(X_test, y_test))
+    print("Score: ", cat_classifier.best_estimator_.score(X_test, y_test))
     # print("Baseline Score: ", baseline_model.score(X_test, y_test))
     print(cat_classifier.best_params_)
 
-    dump(cat_classifier, output_model_joblib_path)
+    dump(cat_classifier.best_estimator_, output_model_joblib_path)

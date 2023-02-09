@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
     for surf in surf_types:
         sheet = pd.read_csv(str(input_dir / surf) + ".csv", sep=';')
-        sheet['sum_axis_current'] = sheet['Current_X_A'].abs() + sheet['Current_Y_A'].abs() + sheet['Current_Z_A'].abs()
+        sheet['sum_axis_current'] = sheet[['Current_X_A', 'Current_Y_A', 'Current_Z_A']].abs().sum(axis=1)
         sheet['rotational'] = np.where(sheet['Rotational_speed_deg_s'] == 0, 0, 1)
         sheet['surface_type'] = surf
         sheet.to_csv(str(output_dir / surf) + "_surf.csv", index=False)

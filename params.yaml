@@ -18,6 +18,14 @@ decision_tree:
     min_samples_split: [ 2, 3, 4, 6 ]
     min_samples_leaf: [ 1, 2, 3, 4 ]
 
+light_gbm:
+  max_bin: [255, 355]
+  learning_rate: [0.05, 0.1]
+  num_iterations: [150, 200]
+  num_leaves: [30, 40]
+  boosting: ["gbdt", "dart"]
+
+
 cat_boost:
   n_estimators: [ 20, 40, 80 ]
   max_depth: [ 5, 8, 12 ]

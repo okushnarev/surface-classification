@@ -9,6 +9,7 @@ from sklearn import tree
 from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import accuracy_score, make_scorer
 
 TREES_MODELS_MAPPER = {'DecisionTree': tree.DecisionTreeClassifier,
                        'RandomForest': RandomForestClassifier}
@@ -49,9 +50,11 @@ if __name__ == '__main__':
     X_test = pd.read_csv(X_test_name)
     y_test = pd.read_csv(y_test_name)
 
+    scorer = make_scorer(accuracy_score)
+
     random.seed(42)
     decision_tree_model = TREES_MODELS_MAPPER.get(args.model_name)()
-    decision_tree_classifier = GridSearchCV(decision_tree_model, params[args.model_name], n_jobs=-1)
+    decision_tree_classifier = GridSearchCV(decision_tree_model, params[args.model_name], scoring=scorer, n_jobs=-1)
 
     if isinstance(decision_tree_model, RandomForestClassifier):
         y_train = np.ravel(y_train.values)
@@ -62,10 +65,10 @@ if __name__ == '__main__':
     dummy_clf = DummyClassifier(strategy='stratified', random_state=42)
     dummy_clf.fit(X_train, y_train)
 
-    print('Score: ', decision_tree_classifier.score(X_test, y_test))
+    print('Score: ', decision_tree_classifier.best_estimator_.score(X_test, y_test))
     print('Baseline Score: ', dummy_clf.score(X_test, y_test))
     print()
     print(decision_tree_classifier.best_params_)
     print()
 
-    dump(decision_tree_classifier, output_model_joblib_path)
+    dump(decision_tree_classifier.best_estimator_, output_model_joblib_path)

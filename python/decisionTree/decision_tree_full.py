@@ -6,7 +6,7 @@ from joblib import dump
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
 
-TREES_MODELS_MAPPER = {'DecisionTree': tree.DecisionTreeRegressor,
+TREES_MODELS_MAPPER = {'DecisionTree': tree.DecisionTreeClassifier,
                        'RandomForest': RandomForestClassifier}
 
 
