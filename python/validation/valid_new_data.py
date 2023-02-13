@@ -1,11 +1,16 @@
+from sklearn import preprocessing
+import lightgbm as lgb
 import argparse
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from joblib import load
-from sklearn import preprocessing
 from sklearn.metrics import accuracy_score
-import lightgbm as lgb
+
+import sys
+sys.path.append('python')
+from decisionTree.decision_tree_valid import metricsAndPlots
+
 
 def parser_args_for_sac():
     parser = argparse.ArgumentParser(description='Paths parser')
@@ -15,6 +20,8 @@ def parser_args_for_sac():
                         required=True)
     parser.add_argument('--model_name', '-mn', type=str, default='lightGBM',
                         required=True)
+    parser.add_argument('--argument_pool', '-ap', type=str, default='motor-axis-currents',
+                        required=True)
     return parser.parse_args()
 
 
@@ -23,7 +30,20 @@ if __name__ == '__main__':
 
     input_dir = Path(args.input_dir)
     input_model = Path(args.input_model)
-    model_name = Path(args.model_name)
+
+    argument_pool = args.argument_pool
+    model_name = args.model_name
+
+    metrics_dir = 'metrics/{}/NewData/{}_metrics.json'.format(
+        argument_pool, model_name
+    )
+
+    cm_plot_dir = 'plots/{}/NewData/{}_CM.png'.format(
+        argument_pool, model_name
+    )
+
+    Path('metrics/{}/NewData'.format(argument_pool)).mkdir(exist_ok=True, parents=True)
+    Path('plots/{}/NewData'.format(argument_pool)).mkdir(exist_ok=True, parents=True)
 
     X_val_name = input_dir / 'X_full.csv'
     y_val_name = input_dir / 'y_full.csv'
@@ -31,7 +51,7 @@ if __name__ == '__main__':
     X_val = pd.read_csv(X_val_name)
     y_val = pd.read_csv(y_val_name)
 
-    if (str(model_name) == 'lightGBM'):
+    if (model_name == 'lightGBM'):
         le = preprocessing.LabelEncoder()
         le.fit(np.ravel(y_val))
 
@@ -47,3 +67,5 @@ if __name__ == '__main__':
 
 
     print('Score on NEW DATA: ', accuracy_score(y_val, pred))
+
+    metricsAndPlots(model_name, y_val, pred, metrics_dir, cm_plot_dir)

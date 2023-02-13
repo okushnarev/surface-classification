@@ -25,11 +25,17 @@ stages:
   decision_tree_validation:
     foreach: ${decision_tree}
     do:
-      cmd: python python/decisionTree/decision_tree_valid.py -id data/prepared/${argument_pool}  -im data/models/${argument_pool}/${key}.joblib
+      cmd: python python/decisionTree/decision_tree_valid.py -id data/prepared/${argument_pool}  -im data/models/${argument_pool}/${key}.joblib -mn ${key} -ap ${argument_pool}
       deps:
         - python/decisionTree/decision_tree_valid.py
         - data/prepared
         - data/models/${argument_pool}/${key}.joblib
+      metrics:
+        - metrics/${argument_pool}/${key}_metrics.json:
+            cache: false
+      plots:
+        - plots/${argument_pool}/${key}_CM.png:
+            cache: false
 
   decision_tree_prod:
     foreach: ${decision_tree}
@@ -52,11 +58,17 @@ stages:
       - light_gbm
 
   light_gbm_valid:
-    cmd: python python/lightGBM/light_gbm_valid.py -id data/prepared/${argument_pool}/ -im data/models/${argument_pool}/lightGBM.joblib
+    cmd: python python/lightGBM/light_gbm_valid.py -id data/prepared/${argument_pool}/ -im data/models/${argument_pool}/lightGBM.joblib -mn LightGBM -ap ${argument_pool}
     deps:
       - python/lightGBM/light_gbm_valid.py
       - data/prepared
       - data/models/${argument_pool}/lightGBM.joblib
+    metrics:
+      - metrics/${argument_pool}/LightGBM_metrics.json:
+          cache: false
+    plots:
+      - plots/${argument_pool}/LightGBM_CM.png:
+          cache: false
 
   light_gbm_prod:
     cmd: python python/lightGBM/light_gbm_full.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/ -ap ${argument_pool}
@@ -79,11 +91,17 @@ stages:
       - cat_boost
 
   cat_boost_validation:
-    cmd: python python/catBoost/cat_boost_valid.py -id data/prepared/${argument_pool}/ -im data/models/${argument_pool}/CatClassifier.joblib
+    cmd: python python/catBoost/cat_boost_valid.py -id data/prepared/${argument_pool}/ -im data/models/${argument_pool}/CatClassifier.joblib -mn CatBoost -ap ${argument_pool}
     deps:
       - python/catBoost/cat_boost_valid.py
       - data/prepared
       - data/models/${argument_pool}/CatClassifier.joblib
+    metrics:
+      - metrics/${argument_pool}/CatBoost_metrics.json:
+          cache: false
+    plots:
+      - plots/${argument_pool}/CatBoost_CM.png:
+          cache: false
 
   cat_boost_prod_version:
     cmd: python python/catBoost/cat_boost_full.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/
@@ -108,8 +126,14 @@ stages:
       - lightGBM
       - CatClassifier
     do:
-      cmd: python python/validation/valid_new_data.py -id data/new/prepared -im data/models/${argument_pool}/${item}_prod.joblib -mn ${item}
+      cmd: python python/validation/valid_new_data.py -id data/new/prepared -im data/models/${argument_pool}/${item}_prod.joblib -mn ${item} -ap ${argument_pool}
       deps:
         - python/validation/valid_new_data.py
         - data/new/prepared
         - data/models/${argument_pool}/${item}_prod.joblib
+      metrics:
+        - metrics/${argument_pool}/NewData/${item}_metrics.json:
+            cache: false
+      plots:
+        - plots/${argument_pool}/NewData/${item}_CM.png:
+            cache: false
