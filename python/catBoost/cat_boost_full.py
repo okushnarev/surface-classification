@@ -5,8 +5,6 @@ from catboost import CatBoostClassifier as Cat
 from joblib import dump
 
 
-
-
 def parser_args_for_sac():
     parser = argparse.ArgumentParser(description='Paths parser')
     parser.add_argument('--input_dir', '-id', type=str, default='data/prepared/',
@@ -42,7 +40,10 @@ if __name__ == '__main__':
         BEST_PARAMETERS = {'max_depth': 13, 'n_estimators': 40}
 
     elif argument_pool == 'only-motor-currents':
-        BEST_PARAMETERS = {'max_depth': 12, 'n_estimators': 40}
+        BEST_PARAMETERS = {'max_depth': 10, 'min_data_in_leaf': 5, 'n_estimators': 100}
+
+    elif argument_pool == 'pure-motor-currents':
+        BEST_PARAMETERS = {'max_depth': 8, 'min_data_in_leaf': 5, 'n_estimators': 40}
 
     else:
         print("ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR")

@@ -2,7 +2,7 @@ import pandas as pd
 import argparse
 from pathlib import Path
 
-from data_prep import to_categorical
+from data_prep import to_categorical, selectFeatures
 
 
 def parser_args_for_sac():
@@ -19,7 +19,7 @@ def parser_args_for_sac():
 def cols_to_numeric(df: pd.DataFrame) -> pd.DataFrame:
     for x in list(df.columns.values):
         df[x] = pd.to_numeric(df[x], errors='coerce').fillna(0)
-    return  df
+    return df
 
 
 if __name__ == '__main__':
@@ -45,21 +45,10 @@ if __name__ == '__main__':
     df_list = (pd.read_csv(str(output_dir / file) + '_surf.csv') for file in surf_types)
 
     df = pd.concat(df_list, ignore_index=True)
-    df = to_categorical(df)
+    df = to_categorical(df, surf_types)
     df.to_csv(output_dir / "merged.csv", index=False)
 
-
-    if argument_pool == 'motor-axis-currents':
-        df = df[['xsetspeed', 'ysetspeed', 'm1cur', 'm2cur', 'm3cur', 'sum_motor_current', 'xcur', 'ycur', 'rotcur',
-             'sum_axis_current', 'rotational', 'surface_type']]
-    elif argument_pool == 'motorCurrent-motorVelocities':
-        df = df[['surface_type', 'rotational', 'xsetspeed', 'ysetspeed',
-                             'm1cur', 'm2cur', 'm3cur', 'm1vel', 'm2vel', 'm3vel']]
-    elif argument_pool == 'only-motor-currents':
-        df = df[['surface_type', 'rotational', 'xsetspeed', 'ysetspeed', 'm1cur', 'm2cur',
-                             'm3cur']]
-    else:
-        print("ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR")
+    df = selectFeatures(argument_pool, df)
 
     X = df.drop('surface_type', axis=1)
     y = df['surface_type']

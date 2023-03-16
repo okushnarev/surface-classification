@@ -1,5 +1,7 @@
 import argparse
 from pathlib import Path
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from joblib import load
@@ -23,21 +25,26 @@ def metricsAndPlots(model_name, y_val, y_pred, metrics_dir, cm_plot_dir):
         )
 
     sns.set_theme(context='paper', style='white', font='Serif', font_scale=2,
-                  rc={'savefig.dpi': 800, 'axes.titlepad': 25,
-                      'axes.labelpad': 25})
+                  rc={'savefig.dpi': 800, 'axes.titlepad': 33,
+                      'figure.figsize': (6, 4.5), 'axes.titlesize': 25,
+                      'axes.labelpad': 25, 'xtick.labeltop': True,
+                      'xtick.major.pad': 10, 'ytick.major.pad': 15,
+                      'xtick.labelbottom': False, 'font.weight': 'bold'})
 
-    categories = ['grey', 'green', 'table']
+    categories = [x.upper() for x in ['grey', 'green', 'table']]
     ConfMatrix = confusion_matrix(y_val, y_pred)
 
     lineWidth = 1.0
 
     heatmap = sns.heatmap(ConfMatrix, annot=True, cbar=False, cmap='Blues',
                           linewidths=lineWidth, linecolor='#000', fmt="d",
-                          xticklabels=categories, yticklabels=categories )
+                          xticklabels=categories, yticklabels=categories)
 
     heatmap.set_title('Confusion matrix for {}'.format(model_name))
     heatmap.set_xlabel("Predicted labels")
-    heatmap.set_ylabel("True labels")
+    # heatmap.set_ylabel("True labels")
+    plt.yticks(rotation=0)
+
 
     for _, spine in heatmap.spines.items():
         spine.set_visible(True)

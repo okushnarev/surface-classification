@@ -31,21 +31,26 @@ if __name__ == '__main__':
     X_full = pd.read_csv(X_full_name)
     y_full = pd.read_csv(y_full_name)
 
-
     if argument_pool == 'motor-axis-currents':
-        BEST_PARAMETERS = {'boosting': 'dart', 'learning_rate': 0.1, 'max_bin': 255, 'num_iterations': 150, 'num_leaves': 30}
+        BEST_PARAMETERS = {'boosting': 'dart', 'learning_rate': 0.1, 'max_bin': 255, 'num_iterations': 150,
+                           'num_leaves': 30}
 
     elif argument_pool == 'motorCurrent-motorVelocities':
-        BEST_PARAMETERS = {'boosting': 'dart', 'learning_rate': 0.1, 'max_bin': 355, 'num_iterations': 150, 'num_leaves': 40}
+        BEST_PARAMETERS = {'boosting': 'dart', 'learning_rate': 0.1, 'max_bin': 355, 'num_iterations': 150,
+                           'num_leaves': 40}
 
     elif argument_pool == 'only-motor-currents':
-        BEST_PARAMETERS = {'boosting': 'dart', 'learning_rate': 0.05, 'max_bin': 255, 'num_iterations': 200, 'num_leaves': 40}
+        BEST_PARAMETERS = {'boosting': 'dart', 'learning_rate': 0.05, 'max_bin': 255, 'num_iterations': 200,
+                           'num_leaves': 40}
 
+    elif argument_pool == 'pure-motor-currents':
+        BEST_PARAMETERS = {'boosting': 'dart', 'learning_rate': 0.05, 'max_bin': 255, 'min_data_in_leaf': 15,
+                           'num_iterations': 200, 'num_leaves': 30}
     else:
         print("ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR")
 
     lgbm_model = lgb.LGBMClassifier(objective="multiclass", num_class=3, verbose=-1, n_jobs=4, **BEST_PARAMETERS)
-    
+
     lgbm_model.fit(X_full, y_full)
 
     lgbm_model.booster_.save_model(output_model_joblib_path)

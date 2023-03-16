@@ -1,18 +1,19 @@
 import argparse
 import random
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import yaml
 from joblib import dump
 from sklearn import tree
-from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score, make_scorer
+from sklearn.model_selection import GridSearchCV
 
 TREES_MODELS_MAPPER = {'DecisionTree': tree.DecisionTreeClassifier,
                        'RandomForest': RandomForestClassifier}
+
 
 def parser_args_for_sac():
     parser = argparse.ArgumentParser(description='Paths parser')
@@ -61,12 +62,7 @@ if __name__ == '__main__':
         y_test = np.ravel(y_test.values)
     decision_tree_classifier = decision_tree_classifier.fit(X=X_train, y=y_train)
 
-    # create dummy classifier
-    dummy_clf = DummyClassifier(strategy='stratified', random_state=42)
-    dummy_clf.fit(X_train, y_train)
-
     print('Score: ', decision_tree_classifier.best_estimator_.score(X_test, y_test))
-    print('Baseline Score: ', dummy_clf.score(X_test, y_test))
     print()
     print(decision_tree_classifier.best_params_)
     print()

@@ -16,10 +16,12 @@ def parser_args_for_sac():
                         help='file with dvc stage params')
     return parser.parse_args()
 
-def to_categorical(df: pd.DataFrame):
-    df['surface_type'] = pd.Categorical(df['surface_type'])
+
+def to_categorical(df: pd.DataFrame, categories):
+    df['surface_type'] = pd.Categorical(df['surface_type'], ordered=True, categories=categories)
     df = df.assign(surface_type=df.surface_type.cat.codes)
     return df
+
 
 def exportDF(df: pd.DataFrame, dir):
     X = df.drop('surface_type', axis=1)
@@ -53,6 +55,22 @@ def exportDF(df: pd.DataFrame, dir):
     y_val.to_csv(y_val_name, index=False)
 
 
+def selectFeatures(argPool, df):
+    if argPool == 'motor-axis-currents':
+        return df[['xsetspeed', 'ysetspeed', 'm1cur', 'm2cur', 'm3cur', 'sum_motor_current', 'xcur', 'ycur', 'rotcur',
+                   'sum_axis_current', 'rotational', 'surface_type']]
+    elif argPool == 'motorCurrent-motorVelocities':
+        return df[['surface_type', 'rotational', 'xsetspeed', 'ysetspeed',
+                   'm1cur', 'm2cur', 'm3cur', 'm1vel', 'm2vel', 'm3vel']]
+    elif argPool == 'only-motor-currents':
+        return df[['surface_type', 'rotational', 'xsetspeed', 'ysetspeed', 'm1cur', 'm2cur',
+                   'm3cur']]
+    elif argPool == 'pure-motor-currents':
+        return df[['surface_type', 'm1cur', 'm2cur', 'm3cur']]
+    else:
+        print("ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR")
+
+
 if __name__ == '__main__':
     args = parser_args_for_sac()
     with open(args.params, 'r') as f:
@@ -76,7 +94,7 @@ if __name__ == '__main__':
     df_list = (pd.read_csv(str(output_dir / file) + '_surf.csv') for file in surf_types)
 
     df = pd.concat(df_list, ignore_index=True)
-    df = to_categorical(df)
+    df = to_categorical(df, surf_types)
 
     old_names = ['X_axis_speed_mm_s', 'Y_axis_speed_mm_s', 'Motor_1_current_A', 'Motor_2_current_A',
                  'Motor_3_current_A', 'Current_X_A', 'Current_Y_A', 'Current_Z_A', 'Sum_motor_current_A',
@@ -90,20 +108,9 @@ if __name__ == '__main__':
 
     df.to_csv(output_dir / "merged.csv", index=False)
 
-    types = ['motor-axis-currents', 'motorCurrent-motorVelocities', 'only-motor-currents']
+    types = ['motor-axis-currents', 'motorCurrent-motorVelocities', 'only-motor-currents', 'pure-motor-currents']
 
     for type in types:
         prepDF = df.copy()
-        if type == 'motor-axis-currents':
-            prepDF = prepDF[['xsetspeed', 'ysetspeed', 'm1cur', 'm2cur', 'm3cur', 'sum_motor_current', 'xcur', 'ycur',
-                             'rotcur', 'sum_axis_current', 'rotational', 'surface_type']]
-        elif type == 'motorCurrent-motorVelocities':
-            prepDF = prepDF[['surface_type', 'rotational', 'xsetspeed', 'ysetspeed',
-                             'm1cur', 'm2cur', 'm3cur', 'm1vel', 'm2vel', 'm3vel']]
-        elif type == 'only-motor-currents':
-            prepDF = prepDF[['surface_type', 'rotational', 'xsetspeed', 'ysetspeed', 'm1cur', 'm2cur',
-                             'm3cur']]
+        prepDF = selectFeatures(type, prepDF)
         exportDF(prepDF, type)
-
-
-

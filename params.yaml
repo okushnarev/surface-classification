@@ -1,5 +1,5 @@
-argument_pool: 'motor-axis-currents'
-#['motor-axis-currents', 'motorCurrent-motorVelocities', 'only-motor-currents']
+argument_pool: 'only-motor-currents'
+#['motor-axis-currents', 'motorCurrent-motorVelocities', 'only-motor-currents', 'pure-motor-currents']
 
 data_prep:
   train_test_ratio: 0.7
@@ -8,25 +8,27 @@ data_prep:
 
 decision_tree:
   DecisionTree:
-    max_depth: [ 5, 10, 15, 20 ]
-    splitter: [ 'best', 'random' ]
-    min_samples_split: [ 2, 3, 4 ]
-    min_samples_leaf: [ 1, 2, 3, 4 ]
+    max_depth: [ 5, 10, 15, 25 ]
+    splitter: [ 'best' ]
+    min_samples_split: [ 5, 10, 15, 25, 35]
+    min_samples_leaf: [ 10, 15, 25, 35 ]
   RandomForest:
-    n_estimators: [5, 10, 15, 25, 35]
-    max_depth: [ 5, 10, 15, 20 ]
-    min_samples_split: [ 2, 3, 4, 6 ]
-    min_samples_leaf: [ 1, 2, 3, 4 ]
+    n_estimators: [ 15, 25, 100]
+    max_depth: [ 5, 10, 15, 20, 25 ]
+    min_samples_split: [ 15, 25, 35]
+    min_samples_leaf: [ 15, 25, 35]
 
 light_gbm:
-  max_bin: [255, 355]
+  max_bin: [100, 255, 355]
   learning_rate: [0.05, 0.1]
   num_iterations: [150, 200]
-  num_leaves: [30, 40]
+  num_leaves: [30, 40, 80]
   boosting: ["gbdt", "dart"]
+  min_data_in_leaf: [10, 15, 25]
 
 
 cat_boost:
-  n_estimators: [ 20, 40, 80 ]
-  max_depth: [ 5, 8, 12 ]
+  n_estimators: [ 40, 100 ]
+  max_depth: [ 6, 8, 10 ]
+  min_data_in_leaf: [5, 10, 15, 20, 25]
 

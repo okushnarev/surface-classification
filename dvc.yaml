@@ -63,6 +63,7 @@ stages:
       - python/lightGBM/light_gbm_valid.py
       - data/prepared
       - data/models/${argument_pool}/lightGBM.joblib
+      - python/decisionTree/decision_tree_valid.py
     metrics:
       - metrics/${argument_pool}/LightGBM_metrics.json:
           cache: false
@@ -80,11 +81,10 @@ stages:
 
 
   cat_boost:
-    cmd: python python/catBoost/cat_boost.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/ -bm data/models/${argument_pool}/RandomForest_prod.joblib -p params.yaml
+    cmd: python python/catBoost/cat_boost.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/ -p params.yaml
     deps:
       - python/catBoost/cat_boost.py
       - data/prepared
-      - data/models/${argument_pool}/DecisionTree_prod.joblib
     outs:
       - data/models/${argument_pool}/CatClassifier.joblib
     params:
