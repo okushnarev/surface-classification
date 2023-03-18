@@ -31,7 +31,6 @@ if __name__ == '__main__':
 
     X_train = pd.read_csv(X_train_name)
     y_train = pd.read_csv(y_train_name)
-    y_train_cols = y_train.columns
 
     if argument_pool == 'motor-axis-currents':
         BEST_PARAMETERS = {'max_depth': 12, 'n_estimators': 40}
