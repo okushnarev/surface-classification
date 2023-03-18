@@ -63,7 +63,6 @@ stages:
       - python/lightGBM/light_gbm_valid.py
       - data/prepared
       - data/models/${argument_pool}/lightGBM.joblib
-      - python/decisionTree/decision_tree_valid.py
     metrics:
       - metrics/${argument_pool}/LightGBM_metrics.json:
           cache: false

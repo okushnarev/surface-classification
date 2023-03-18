@@ -56,20 +56,31 @@ def exportDF(df: pd.DataFrame, dir):
 
 
 def selectFeatures(argPool, df):
-    if argPool == 'motor-axis-currents':
-        return df[['xsetspeed', 'ysetspeed', 'm1cur', 'm2cur', 'm3cur', 'sum_motor_current', 'xcur', 'ycur', 'rotcur',
-                   'sum_axis_current', 'rotational', 'surface_type']]
-    elif argPool == 'motorCurrent-motorVelocities':
-        return df[['surface_type', 'rotational', 'xsetspeed', 'ysetspeed',
-                   'm1cur', 'm2cur', 'm3cur', 'm1vel', 'm2vel', 'm3vel']]
-    elif argPool == 'only-motor-currents':
-        return df[['surface_type', 'rotational', 'xsetspeed', 'ysetspeed', 'm1cur', 'm2cur',
-                   'm3cur']]
-    elif argPool == 'pure-motor-currents':
-        return df[['surface_type', 'm1cur', 'm2cur', 'm3cur']]
-    else:
-        print("ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR")
 
+    beginning = ['surface_type']
+    motCurrPattern = ['m1cur', 'm2cur', 'm3cur']
+    commandedVelPattern = ['rotational', 'xsetspeed', 'ysetspeed']
+    fuzzyPattern = ['grey', 'green', 'table']
+
+    pools = {
+        'motor-axis-currents': beginning + commandedVelPattern + motCurrPattern +
+                                ['sum_motor_current', 'xcur', 'ycur', 'rotcur', 'sum_axis_current'],
+
+        'motorCurrent-motorVelocities': beginning + commandedVelPattern + motCurrPattern + [ 'm1vel', 'm2vel', 'm3vel'],
+
+        'only-motor-currents': beginning + commandedVelPattern + motCurrPattern,
+
+        'pure-motor-currents': beginning + motCurrPattern,
+
+        'fuzzy-input-motCur-commandedVel': beginning + commandedVelPattern + motCurrPattern + fuzzyPattern,
+
+        'fuzzy-input-motCur': beginning + motCurrPattern + fuzzyPattern,
+    }
+
+    if argPool in pools:
+        return df[pools[argPool]]
+    else:
+        raise Exception('No such argument pool')
 
 if __name__ == '__main__':
     args = parser_args_for_sac()
@@ -108,7 +119,8 @@ if __name__ == '__main__':
 
     df.to_csv(output_dir / "merged.csv", index=False)
 
-    types = ['motor-axis-currents', 'motorCurrent-motorVelocities', 'only-motor-currents', 'pure-motor-currents']
+    types = ['motor-axis-currents', 'motorCurrent-motorVelocities', 'only-motor-currents', 'pure-motor-currents' ,
+             'fuzzy-input-motCur-commandedVel', 'fuzzy-input-motCur']
 
     for type in types:
         prepDF = df.copy()

@@ -31,23 +31,31 @@ if __name__ == '__main__':
     X_full = pd.read_csv(X_full_name)
     y_full = pd.read_csv(y_full_name)
 
-    if argument_pool == 'motor-axis-currents':
-        BEST_PARAMETERS = {'boosting': 'dart', 'learning_rate': 0.1, 'max_bin': 255, 'num_iterations': 150,
-                           'num_leaves': 30}
+    pools = {
+        'motor-axis-currents': {'boosting': 'dart', 'learning_rate': 0.1, 'max_bin': 255, 'num_iterations': 150,
+                                'num_leaves': 30},
 
-    elif argument_pool == 'motorCurrent-motorVelocities':
-        BEST_PARAMETERS = {'boosting': 'dart', 'learning_rate': 0.1, 'max_bin': 355, 'num_iterations': 150,
-                           'num_leaves': 40}
+        'motorCurrent-motorVelocities': {'boosting': 'dart', 'learning_rate': 0.1, 'max_bin': 355,
+                                         'num_iterations': 150,
+                                         'num_leaves': 40},
 
-    elif argument_pool == 'only-motor-currents':
-        BEST_PARAMETERS = {'boosting': 'dart', 'learning_rate': 0.05, 'max_bin': 255, 'num_iterations': 200,
-                           'num_leaves': 40}
+        'only-motor-currents': {'boosting': 'dart', 'learning_rate': 0.05, 'max_bin': 255, 'num_iterations': 200,
+                                'num_leaves': 40},
 
-    elif argument_pool == 'pure-motor-currents':
-        BEST_PARAMETERS = {'boosting': 'dart', 'learning_rate': 0.05, 'max_bin': 255, 'min_data_in_leaf': 15,
-                           'num_iterations': 200, 'num_leaves': 30}
+        'pure-motor-currents': {'boosting': 'dart', 'learning_rate': 0.05, 'max_bin': 255, 'min_data_in_leaf': 15,
+                                'num_iterations': 200, 'num_leaves': 30},
+
+        'fuzzy-input-motCur-commandedVel': {'boosting': 'dart', 'learning_rate': 0.1, 'max_bin': 255,
+                                            'min_data_in_leaf': 25, 'num_iterations': 200, 'num_leaves': 40},
+
+        'fuzzy-input-motCur': {'boosting': 'dart', 'learning_rate': 0.05, 'max_bin': 255, 'min_data_in_leaf': 25,
+                               'num_iterations': 200, 'num_leaves': 40},
+    }
+
+    if argument_pool in pools:
+        BEST_PARAMETERS = pools[argument_pool]
     else:
-        print("ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR")
+        raise Exception('No such argument pool')
 
     lgbm_model = lgb.LGBMClassifier(objective="multiclass", num_class=3, verbose=-1, n_jobs=4, **BEST_PARAMETERS)
 

@@ -1,5 +1,6 @@
-argument_pool: 'only-motor-currents'
-#['motor-axis-currents', 'motorCurrent-motorVelocities', 'only-motor-currents', 'pure-motor-currents']
+argument_pool: 'fuzzy-input-motCur-commandedVel'
+#['motor-axis-currents', 'motorCurrent-motorVelocities', 'only-motor-currents', 'pure-motor-currents' ,
+#             'fuzzy-input-motCur-commandedVel', 'fuzzy-input-motCur']
 
 data_prep:
   train_test_ratio: 0.7
@@ -10,11 +11,11 @@ decision_tree:
   DecisionTree:
     max_depth: [ 5, 10, 15, 25 ]
     splitter: [ 'best' ]
-    min_samples_split: [ 5, 10, 15, 25, 35]
+    min_samples_split: [ 10, 15, 25, 35]
     min_samples_leaf: [ 10, 15, 25, 35 ]
   RandomForest:
     n_estimators: [ 15, 25, 100]
-    max_depth: [ 5, 10, 15, 20, 25 ]
+    max_depth: [ 10, 15, 20, 25 ]
     min_samples_split: [ 15, 25, 35]
     min_samples_leaf: [ 15, 25, 35]
 
@@ -30,5 +31,5 @@ light_gbm:
 cat_boost:
   n_estimators: [ 40, 100 ]
   max_depth: [ 6, 8, 10 ]
-  min_data_in_leaf: [5, 10, 15, 20, 25]
+  min_data_in_leaf: [10, 15, 25]
 

@@ -33,20 +33,24 @@ if __name__ == '__main__':
     y_train = pd.read_csv(y_train_name)
     y_train_cols = y_train.columns
 
-    if argument_pool == 'motor-axis-currents':
-        BEST_PARAMETERS = {'max_depth': 12, 'n_estimators': 40}
+    pools = {
+        'motor-axis-currents': {'max_depth': 12, 'n_estimators': 40},
 
-    elif argument_pool == 'motorCurrent-motorVelocities':
-        BEST_PARAMETERS = {'max_depth': 13, 'n_estimators': 40}
+        'motorCurrent-motorVelocities': {'max_depth': 13, 'n_estimators': 40},
 
-    elif argument_pool == 'only-motor-currents':
-        BEST_PARAMETERS = {'max_depth': 10, 'min_data_in_leaf': 5, 'n_estimators': 100}
+        'only-motor-currents': {'max_depth': 10, 'min_data_in_leaf': 5, 'n_estimators': 100},
 
-    elif argument_pool == 'pure-motor-currents':
-        BEST_PARAMETERS = {'max_depth': 8, 'min_data_in_leaf': 5, 'n_estimators': 40}
+        'pure-motor-currents': {'max_depth': 8, 'min_data_in_leaf': 5, 'n_estimators': 40},
 
+        'fuzzy-input-motCur-commandedVel': {'max_depth': 8, 'min_data_in_leaf': 10, 'n_estimators': 100},
+
+        'fuzzy-input-motCur': {'max_depth': 6, 'min_data_in_leaf': 10, 'n_estimators': 100},
+    }
+
+    if argument_pool in pools:
+        BEST_PARAMETERS = pools[argument_pool]
     else:
-        print("ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR")
+        raise Exception('No such argument pool')
 
     reg = Cat(**BEST_PARAMETERS)
     reg = reg.fit(X_train, y_train, silent=True)
