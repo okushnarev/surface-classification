@@ -90,7 +90,7 @@ stages:
     params:
       - cat_boost
 
-  cat_boost_validation:
+  cat_boost_valid:
     cmd: python python/catBoost/cat_boost_valid.py -id data/prepared/${argument_pool}/ -im data/models/${argument_pool}/CatClassifier.joblib -mn CatBoost -ap ${argument_pool}
     deps:
       - python/catBoost/cat_boost_valid.py
@@ -103,7 +103,7 @@ stages:
       - plots/${argument_pool}/CatBoost_CM.png:
           cache: false
 
-  cat_boost_prod_version:
+  cat_boost_prod:
     cmd: python python/catBoost/cat_boost_full.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/
     deps:
       - python/catBoost/cat_boost_full.py

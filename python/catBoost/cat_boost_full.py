@@ -42,7 +42,7 @@ if __name__ == '__main__':
         BEST_PARAMETERS = {'max_depth': 10, 'min_data_in_leaf': 5, 'n_estimators': 100}
 
     elif argument_pool == 'pure-motor-currents':
-        BEST_PARAMETERS = {'max_depth': 8, 'min_data_in_leaf': 5, 'n_estimators': 40}
+        BEST_PARAMETERS = {'max_depth': 8, 'min_data_in_leaf': 50, 'n_estimators': 40}
 
     else:
         print("ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR-ERROR")
