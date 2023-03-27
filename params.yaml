@@ -1,4 +1,4 @@
-argument_pool: 'only-motor-currents'
+argument_pool: 'pure-motor-currents'
 #['motor-axis-currents', 'motorCurrent-motorVelocities', 'only-motor-currents', 'pure-motor-currents']
 
 data_prep:
@@ -12,6 +12,11 @@ decision_tree:
     splitter: [ 'best' ]
     min_samples_split: [ 5, 10, 15, 25, 35]
     min_samples_leaf: [ 10, 15, 25, 35 ]
+#  DecisionTree:
+#    max_depth: [ 7 ]
+#    splitter: [ 'best' ]
+#    min_samples_leaf: [ 15 ]
+#    min_samples_split: [ 10 ]
   RandomForest:
     n_estimators: [ 15, 25, 100]
     max_depth: [ 5, 10, 15, 20, 25 ]
@@ -27,8 +32,16 @@ light_gbm:
   min_data_in_leaf: [10, 15, 25]
 
 
-cat_boost:
-  n_estimators: [ 40, 100 ]
-  max_depth: [ 6, 8, 10 ]
-  min_data_in_leaf: [5, 10, 15, 20, 25]
+#cat_boost:
+#  n_estimators: [ 40, 100 ]
+#  max_depth: [ 6, 8, 10 ]
+#  min_data_in_leaf: [5, 10, 15, 20, 25]
 
+cat_boost:
+  max_depth: [ 8 ]
+  min_data_in_leaf: [ 50 ]
+  n_estimators: [ 40 ]
+
+svm:
+  kernel: ['linear']
+  C: [ 1.0]

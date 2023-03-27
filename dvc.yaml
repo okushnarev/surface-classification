@@ -103,13 +103,46 @@ stages:
       - plots/${argument_pool}/CatBoost_CM.png:
           cache: false
 
-  cat_boost_prod_version:
+  cat_boost_prod:
     cmd: python python/catBoost/cat_boost_full.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/
     deps:
       - python/catBoost/cat_boost_full.py
       - data/prepared
     outs:
       - data/models/${argument_pool}/CatClassifier_prod.joblib
+
+  SVM:
+    cmd: python python/svm/svm.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/ -bpd python/svm/ -p params.yaml
+    deps:
+      - python/svm/svm.py
+      - data/prepared
+    outs:
+      - data/models/${argument_pool}/svm.joblib
+      - python/svm/svm_best.json
+    params:
+      - svm
+
+  SVM_valid:
+    cmd: python python/svm/svm_valid.py -id data/prepared/${argument_pool}/ -im data/models/${argument_pool}/svm.joblib -mn svm -ap ${argument_pool}
+    deps:
+      - python/svm/svm_valid.py
+      - data/models/${argument_pool}/svm.joblib
+      - data/prepared
+    metrics:
+      - metrics/${argument_pool}/svm_metrics.json:
+          cache: false
+    plots:
+      - plots/${argument_pool}/svm_CM.png:
+          cache: false
+
+  SVM_prod:
+    cmd: python python/svm/svm_full.py -id data/prepared/${argument_pool}/ -od data/models/${argument_pool}/ -bpd python/svm/
+    deps:
+      - python/svm/svm_full.py
+      - python/svm/svm_best.json
+      - data/prepared
+    outs:
+      - data/models/${argument_pool}/svm_prod.joblib
 
   prep_valid_data:
     cmd: python python/DataPreparation/data_prep_new.py -id data/new/raw -od data/new/prepared  -ap ${argument_pool}
@@ -125,6 +158,7 @@ stages:
       - RandomForest
       - lightGBM
       - CatClassifier
+      - svm
     do:
       cmd: python python/validation/valid_new_data.py -id data/new/prepared -im data/models/${argument_pool}/${item}_prod.joblib -mn ${item} -ap ${argument_pool}
       deps:
