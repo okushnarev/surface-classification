@@ -22,7 +22,7 @@ stages:
       params:
         - decision_tree
 
-  decision_tree_validation:
+  decision_tree_valid:
     foreach: ${decision_tree}
     do:
       cmd: python python/decisionTree/decision_tree_valid.py -id data/prepared/${argument_pool}  -im data/models/${argument_pool}/${key}.joblib -mn ${key} -ap ${argument_pool}
@@ -90,7 +90,7 @@ stages:
     params:
       - cat_boost
 
-  cat_boost_validation:
+  cat_boost_valid:
     cmd: python python/catBoost/cat_boost_valid.py -id data/prepared/${argument_pool}/ -im data/models/${argument_pool}/CatClassifier.joblib -mn CatBoost -ap ${argument_pool}
     deps:
       - python/catBoost/cat_boost_valid.py
@@ -119,7 +119,7 @@ stages:
     outs:
       - data/new/prepared
 
-  validation_on_new_data:
+  valid_new_data:
     foreach:
       - DecisionTree
       - RandomForest

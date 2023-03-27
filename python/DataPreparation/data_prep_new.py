@@ -38,6 +38,7 @@ if __name__ == '__main__':
         sheet = cols_to_numeric(sheet)
         sheet['sum_motor_current'] = sheet[['m1cur', 'm2cur', 'm3cur']].abs().sum(axis=1)
         sheet['sum_axis_current'] = sheet[['xcur', 'ycur', 'rotcur']].abs().sum(axis=1)
+        sheet[['xsetspeed', 'ysetspeed']] *= 1000
         sheet['rotational'] = 0
         sheet['surface_type'] = surf
         sheet.to_csv(str(output_dir / surf) + "_surf.csv", index=False)
